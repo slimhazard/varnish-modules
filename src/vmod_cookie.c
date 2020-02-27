@@ -51,10 +51,6 @@ enum filter_action {
 	whitelist = 1
 };
 
-vre_t * compile_re(VRT_CTX, VCL_STRING);
-VCL_VOID re_filter(VRT_CTX, struct vmod_priv *, struct vmod_priv *,
-    VCL_STRING, enum filter_action);
-
 static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 struct cookie {
@@ -231,7 +227,7 @@ vmod_get(VRT_CTX, struct vmod_priv *priv, VCL_STRING name)
 }
 
 
-vre_t *
+static vre_t *
 compile_re(VRT_CTX, VCL_STRING expression) {
 	vre_t *vre;
 	const char *error;
@@ -244,6 +240,17 @@ compile_re(VRT_CTX, VCL_STRING expression) {
 		return(NULL);
 	}
 	return(vre);
+}
+
+static void
+free_re(void *priv)
+{
+	vre_t *vre;
+
+	AN(priv);
+	vre = priv;
+	VRE_free(&vre);
+	AZ(vre);
 }
 
 VCL_STRING
@@ -269,7 +276,7 @@ vmod_get_re(VRT_CTX, struct vmod_priv *priv, struct vmod_priv *priv_call,
 		}
 
 		priv_call->priv = vre;
-		priv_call->free = free;
+		priv_call->free = free_re;
 		AZ(pthread_mutex_unlock(&mtx));
 	}
 
@@ -404,9 +411,9 @@ vmod_filter(VRT_CTX, struct vmod_priv *priv, VCL_STRING blacklist_s)
 }
 
 
-VCL_VOID
+static void
 re_filter(VRT_CTX, struct vmod_priv *priv, struct vmod_priv *priv_call,
-		  VCL_STRING expression, enum filter_action mode)
+    VCL_STRING expression, enum filter_action mode)
 {
 	struct vmod_cookie *vcp = cobj_get(priv);
 	struct cookie *current, *safeptr;
@@ -423,7 +430,7 @@ re_filter(VRT_CTX, struct vmod_priv *priv, struct vmod_priv *priv_call,
 		}
 
 		priv_call->priv = vre;
-		priv_call->free = free;
+		priv_call->free = free_re;
 		AZ(pthread_mutex_unlock(&mtx));
 	}
 
