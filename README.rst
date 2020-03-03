@@ -13,7 +13,6 @@ describing HTTP request/response policies with additional capabilities.
 
 Included:
 
-* Simpler handling of HTTP cookies
 * Variable support
 * Request and bandwidth throttling
 * Modify and change complex HTTP headers
@@ -22,8 +21,8 @@ Included:
 * Client request body access
 
 This collection contains the following vmods (previously kept
-individually): cookie, vsthrottle, header, saintmode, softpurge, tcp,
-var, xkey, bodyaccess
+individually): vsthrottle, header, saintmode, softpurge, tcp, var,
+xkey, bodyaccess
 
 Supported Varnish version is described in the `CHANGES.rst` file. Normally this
 is the last public Varnish Cache release. See PORTING below for information on
@@ -71,15 +70,21 @@ Usage
 
 Each module has a different set of functions and usage, described in
 separate documents in `docs/`. For completeness, here is a snippet from
-`docs/cookie.rst`::
+`docs/header.rst`::
 
-    import cookie;
+    vcl 4.0;
+    import header;
 
-    sub vcl_recv {
-            cookie.parse(req.http.cookie);
-            cookie.filter_except("SESSIONID,PHPSESSID");
-            set req.http.cookie = cookie.get_string();
-            # Only SESSIONID and PHPSESSID are left in req.http.cookie at this point.
+    backend default { .host = "192.0.2.11"; .port = "8080"; }
+
+    sub vcl_backend_response {
+        if (beresp.http.Set-Cookie) {
+            # Add another line of Set-Cookie in the response.
+            header.append(beresp.http.Set-Cookie, "VSESS=abbabeef");
+
+            # CMS always set this, but doesn't really need it.
+            header.remove(beresp.http.Set-Cookie, "JSESSIONID=");
+        }
     }
 
 
