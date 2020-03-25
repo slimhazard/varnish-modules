@@ -1,0 +1,91 @@
+varnishtest "Test xkey bytes gauge"
+feature 64bit
+
+server s1 {
+	rxreq
+	txresp -hdr "xkey: asdf"
+	rxreq
+	txresp -hdr "xkey: fdsa"
+	rxreq
+	txresp -hdr "xkey: asdf"
+} -start
+
+varnish v1 -vcl+backend {
+	import xkey from "${vmod_builddir}/.libs/libvmod_xkey.so";
+
+	sub vcl_recv {
+		if (req.http.xkey-purge) {
+			if (xkey.purge(req.http.xkey-purge) != 0) {
+				return (synth(200, "Purged"));
+			} else {
+				return (synth(404, "No key"));
+			}
+		}
+	}
+
+	sub vcl_backend_response {
+		set beresp.ttl = 60s;
+		set beresp.grace = 0s;
+		set beresp.keep = 0s;
+	}
+
+	sub vcl_synth {
+		set resp.http.reason = resp.reason;
+	}
+} -start
+
+# g_hashhead_bytes  = 104 bytes per xkey
+# g_ochead_bytes    = 80 bytes per cached object
+# g_oc_bytes        = 56 bytes per cached object
+
+# no cache, no xkeys
+varnish v1 -expect XKEY.g_hashhead_bytes == 0  \
+           -expect XKEY.g_ochead_bytes == 0 \
+           -expect XKEY.g_oc_bytes == 0 \
+           -expect XKEY.g_bytes == 0
+
+client c1 {
+	txreq
+	rxresp
+} -run
+
+# one cached response, one xkey
+varnish v1 -expect XKEY.g_hashhead_bytes == 104 \
+           -expect XKEY.g_ochead_bytes == 80 \
+           -expect XKEY.g_oc_bytes == 56 \
+           -expect XKEY.g_bytes == 240
+
+client c1 {
+	txreq -url /something_longish
+	rxresp
+} -run
+
+# two cached responses, two xkeys
+varnish v1 -expect XKEY.g_hashhead_bytes == 208 \
+           -expect XKEY.g_ochead_bytes == 160 \
+           -expect XKEY.g_oc_bytes == 112 \
+           -expect XKEY.g_bytes == 480
+
+client c1 {
+	txreq -url /something_else
+	rxresp
+} -run
+
+# three cached responses, two xkeys
+varnish v1 -expect XKEY.g_hashhead_bytes == 208 \
+           -expect XKEY.g_ochead_bytes == 240 \
+           -expect XKEY.g_oc_bytes == 168 \
+           -expect XKEY.g_bytes == 616
+
+client c1 {
+	txreq -hdr "xkey-purge: asdf"
+	rxresp
+	expect resp.status == 200
+	expect resp.http.reason == "Purged"
+} -run
+
+# one cached response, one xkey
+varnish v1 -expect XKEY.g_hashhead_bytes == 104 \
+           -expect XKEY.g_ochead_bytes == 80 \
+           -expect XKEY.g_oc_bytes == 56 \
+           -expect XKEY.g_bytes == 240

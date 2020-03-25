@@ -141,6 +141,8 @@ static struct xkey_hashhead *
 xkey_hashhead_new(void)
 {
 	struct xkey_hashhead *head;
+	vsc->g_hashhead_bytes += sizeof(*head);
+	vsc->g_bytes += sizeof(*head);
 
 	if (xkey_pool.n_hashhead > 0) {
 		head = VTAILQ_FIRST(&xkey_pool.hashheads);
@@ -159,6 +161,8 @@ static void
 xkey_hashhead_delete(struct xkey_hashhead **phead)
 {
 	struct xkey_hashhead *head;
+	vsc->g_hashhead_bytes -= sizeof(*head);
+	vsc->g_bytes -= sizeof(*head);
 
 	head = *phead;
 	*phead = NULL;
@@ -177,6 +181,8 @@ static struct xkey_ochead *
 xkey_ochead_new(void)
 {
 	struct xkey_ochead *head;
+	vsc->g_ochead_bytes += sizeof(*head);
+	vsc->g_bytes += sizeof(*head);
 
 	if (xkey_pool.n_ochead > 0) {
 		head = VTAILQ_FIRST(&xkey_pool.ocheads);
@@ -194,6 +200,8 @@ static void
 xkey_ochead_delete(struct xkey_ochead **phead)
 {
 	struct xkey_ochead *head;
+	vsc->g_ochead_bytes -= sizeof(*head);
+	vsc->g_bytes -= sizeof(*head);
 
 	head = *phead;
 	*phead = NULL;
@@ -212,6 +220,8 @@ static struct xkey_oc *
 xkey_oc_new(void)
 {
 	struct xkey_oc *oc;
+	vsc->g_oc_bytes += sizeof(*oc);
+	vsc->g_bytes += sizeof(*oc);
 
 	if (xkey_pool.n_oc > 0) {
 		oc = VTAILQ_FIRST(&xkey_pool.ocs);
@@ -228,6 +238,8 @@ static void
 xkey_oc_delete(struct xkey_oc **poc)
 {
 	struct xkey_oc *oc;
+	vsc->g_oc_bytes -= sizeof(*oc);
+	vsc->g_bytes -= sizeof(*oc);
 
 	oc = *poc;
 	*poc = NULL;
@@ -270,7 +282,7 @@ xkey_hashtree_insert(const unsigned char *digest, unsigned len)
 	if (key != NULL) {
 		xkey_hashhead_delete(&head);
 		CAST_OBJ_NOTNULL(head, (void *)key, XKEY_HASHHEAD_MAGIC);
-	} else
+	} else 
 		vsc->g_keys++;
 	return (head);
 }

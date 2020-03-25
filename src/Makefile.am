@@ -141,7 +141,9 @@ VMOD_TESTS = \
 	tests/xkey/test08.vtc \
 	tests/xkey/test09.vtc \
 	tests/xkey/test10.vtc \
-	tests/xkey/test11.vtc
+	tests/xkey/test11.vtc \
+	tests/xkey/test12.vtc \
+	tests/xkey/test13.vtc
 
 SOFTPURGE_TESTS = \
 	tests/softpurge/01-load.vtc \
