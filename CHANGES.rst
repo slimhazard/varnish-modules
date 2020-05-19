@@ -1,10 +1,5 @@
 This is a running log of changes to varnish-modules.
 
-nigoroll/master
----------------
-
-* removed vmod_cookie, which is now part of varnish-cache
-
 varnish-modules 0.15.0 (2018-05-15)
 -----------------------------------
 
