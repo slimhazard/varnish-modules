@@ -42,34 +42,10 @@ VARNISH_VMODS([
 ])
 VARNISH_COUNTERS([xkey])
 
-AS_VERSION_COMPARE([$VARNISH_VERSION], [6.4], [VARNISH_VMODS([softpurge])])
-AM_CONDITIONAL([WITH_VMOD_SOFTPURGE], [test -n "$BUILD_VMOD_SOFTPURGE"])
-
 save_CPPFLAGS=$CPPFLAGS
 CPPFLAGS=$VARNISHAPI_CFLAGS
 
 AC_CHECK_HEADERS([cache/cache_varnishd.h])
-
-AC_CHECK_MEMBER(struct objcore.exp,
-	[AC_DEFINE([HAVE_OBJCORE_EXP], [1],
-		[Define if exp is present in the objcore struct])],
-	[], [#include <cache/cache.h>])
-
-AC_CHECK_MEMBER(struct objcore.hsh_list,
-	[AC_DEFINE([HAVE_OBJCORE_HSH_LIST], [1],
-		[Define if hsh_list is present in the objcore struct])],
-	[], [#include <cache/cache.h>])
-
-AC_CHECK_MEMBER(struct director.admin_health,
-	[AC_DEFINE([HAVE_DIRECTOR_ADMIN_HEALTH], [1],
-		[Define if admin_health is present in the director struct])],
-	[], [
-		#include <cache/cache.h>
-		#include <cache/cache_director.h>
-	])
-
-AC_CHECK_TYPES([req_body_iter_f, objiterate_f, enum exp_event_e],
-	[], [], [#include <cache/cache.h>])
 
 CPPFLAGS=$save_CPPFLAGS
 

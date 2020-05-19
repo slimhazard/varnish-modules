@@ -5,6 +5,77 @@ This repository is based upon
 https://github.com/varnish/varnish-modules with necessary adjustments
 for varnish-cache master. It is being maintained by https://uplex.de/
 
+Upstream notes
+==============
+
+Modules in this repository are generally not in active development by
+Varnish Software. However, any security related bugs and issues will
+always be a high priority, and in some cases we will accept new
+features to the VMODs
+
+For Varnish Software, the upstream maintainer of this repository, the
+VMODs are categorized as follows.
+
+VMODs under development
+-----------------------
+
+The VMODs in this category are ``tcp`` and ``vsthrottle``.
+
+New features for these VMODs will be considered on a case-by-case
+basis, and new features will be accepted if they fit together with
+existing features in VMOD.
+
+Feature complete VMODs
+----------------------
+
+The VMODs in this category are ``xkey``, ``saintmode``, ``bodyaccess``,
+``header`` and ``var``.
+
+This software in this repository is considered feature complete and we
+do no longer accept contributions that introduce new features. The
+software is maintained with security and bug fixes, and contributions
+related to this will be accepted.
+
+Deprecated VMODs
+----------------
+
+There are no VMODs in this category.
+
+This software has been deprecated and is no longer maintained.
+Contributions will not be accepted.
+
+
+Moved or replaced VMODs
+-----------------------
+
+VMODs in this category are no longer maintained because their
+functionality is covered by other functionality or newer VMODs.
+
+In this repository there is only two such vmods:
+
+* ``cookie``, that is now part of varnish-cache
+
+* ``softpurge`` is now replaced by the ``purge`` VMOD in varnish-cache
+  Note that this VMOD is also in the "feature complete" category,
+  since it is still needed for Varnish Cache 4.1.
+
+General note
+------------
+
+If you want to contribute a feature for this software, please create
+an issue and describe your implementation plans before you get
+started. This allows us to verify that the contribution is in line
+with the software's roadmap.
+
+Future compatibility
+--------------------
+
+Varnish Software has no commitment to update this software to be
+compatible with future versions of Varnish Cache. At the same time,
+the license of the sotware allows anyone to improve the product in any
+way, for example by making it compatible with future versions of
+Varnish Cache.
+
 Varnish module collection by Varnish Software
 =============================================
 
@@ -21,8 +92,8 @@ Included:
 * Client request body access
 
 This collection contains the following vmods (previously kept
-individually): vsthrottle, header, saintmode, softpurge, tcp, var,
-xkey, bodyaccess
+individually): vsthrottle, header, saintmode, tcp,
+var, xkey, bodyaccess
 
 Supported Varnish version is described in the `CHANGES.rst` file. Normally this
 is the last public Varnish Cache release. See PORTING below for information on
