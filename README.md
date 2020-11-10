@@ -1,9 +1,9 @@
-[![CircleCI](https://circleci.com/gh/varnish/varnish-modules/tree/master.svg?style=svg)](https://app.circleci.com/pipelines/github/varnish/varnish-modules?branch=master)
+# About this repository
 
-# Varnish module collection by Varnish Software
-
-This is a collection of modules ("vmods") extending Varnish VCL used for
-describing HTTP request/response policies with additional capabilities.
+This repository is based upon
+https://github.com/varnish/varnish-modules with additions and
+necessary adjustments for varnish-cache master. It is being maintained
+by https://uplex.de/
 
 Included:
 
@@ -16,47 +16,13 @@ Included:
 * `vstrottle`: Request and bandwidth throttling
 * `xkey`: Advanced cache invalidations
 
+# Upstream notes
+
 Modules in this repository are generally not in active development by
 Varnish Software. However, any security related bugs and issues will
 always be a high priority. We'll also gladly considering pull requests for new
 features but we recommend opening an issue first to discuss implementation
 plans.
-
-## Installation
-
-Source releases can be downloaded from the [github release page of the project(]https://github.com/varnish/varnish-modules/releases)
-and older releases are located [here](https://download.varnish-software.com/varnish-modules/).
-
-Each release only targets one version of Varnish and the git repository sports a
-branch dedicated to each version, starting from `6.0`. This means that if you
-want to compile modules for Varnish `6.3`, you need to `git checkout` the `6.3`
-branch of this repository
-
-Compiling, testing and installing relies on the `autotools` suite and requires
-the usual dependencies, plus the Varnish develpoment files and `python-sphinx`.
-
-Here's a directly usable `Dockerfile` as an example:
-
-``` dockerfile
-FROM centos:7
-
-# install Varnish 6.5 from https://packagecloud.io/varnishcache
-RUN curl -s https://packagecloud.io/install/repositories/varnishcache/varnish65/script.rpm.sh | bash
-# the epel repo contains jemalloc
-RUN yum install -y epel-release
-# install our dependencies
-RUN yum install -y git make automake libtool python-sphinx varnish-devel
-# download the top of the varnish-modules 6.5 branch
-RUN git clone --branch 6.5 --single-branch https://github.com/varnish/varnish-modules.git
-# jump into the directory
-WORKDIR /varnish-modules
-# prepare the build, build, check and install
-RUN ./bootstrap && \
-    ./configure && \
-    make && \
-    make check -j 4 && \
-    make install
-```
 
 ## Usage
 
