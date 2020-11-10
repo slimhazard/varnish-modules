@@ -23,9 +23,11 @@ AM_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)
 AM_LDFLAGS = $(VARNISHAPI_LIBS) $(VMOD_LDFLAGS) $(CODE_COVERAGE_LDFLAGS)
 
 vmod_LTLIBRARIES = \
+	libvmod_accept.la \
 	libvmod_bodyaccess.la \
 	libvmod_header.la \
 	libvmod_saintmode.la \
+	libvmod_str.la \
 	libvmod_tcp.la \
 	libvmod_var.la \
 	libvmod_vsthrottle.la \
@@ -33,9 +35,11 @@ vmod_LTLIBRARIES = \
 
 if HAVE_RST2MAN
 dist_man_MANS = \
+	vmod_accept.3 \
 	vmod_bodyaccess.3 \
 	vmod_header.3 \
 	vmod_saintmode.3 \
+	vmod_str.3 \
 	vmod_tcp.3 \
 	vmod_var.3 \
 	vmod_vsthrottle.3 \
@@ -44,27 +48,33 @@ endif
 
 generated_docs = $(dist_man_MANS:.3=.rst)
 
+libvmod_accept_la_SOURCES = vmod_accept.c
 libvmod_bodyaccess_la_SOURCES = vmod_bodyaccess.c
 libvmod_header_la_SOURCES = vmod_header.c
 libvmod_vsthrottle_la_SOURCES = vmod_vsthrottle.c
 libvmod_saintmode_la_SOURCES = vmod_saintmode.c
+libvmod_str_la_SOURCES = vmod_str.c
 libvmod_tcp_la_SOURCES = vmod_tcp.c
 libvmod_var_la_SOURCES = vmod_var.c
 libvmod_xkey_la_SOURCES = vmod_xkey.c
 
+nodist_libvmod_accept_la_SOURCES = vcc_accept_if.c vcc_accept_if.h
 nodist_libvmod_bodyaccess_la_SOURCES = vcc_bodyaccess_if.c vcc_bodyaccess_if.h
 nodist_libvmod_header_la_SOURCES = vcc_header_if.c vcc_header_if.h
 nodist_libvmod_vsthrottle_la_SOURCES = vcc_vsthrottle_if.c vcc_vsthrottle_if.h
 nodist_libvmod_saintmode_la_SOURCES = vcc_saintmode_if.c vcc_saintmode_if.h
+nodist_libvmod_str_la_SOURCES = vcc_str_if.c vcc_str_if.h
 nodist_libvmod_tcp_la_SOURCES = vcc_tcp_if.c vcc_tcp_if.h
 nodist_libvmod_var_la_SOURCES = vcc_var_if.c vcc_var_if.h
 nodist_libvmod_xkey_la_SOURCES = vcc_xkey_if.c vcc_xkey_if.h VSC_xkey.c VSC_xkey.h
 
 vmod_xkey.3: VSC_xkey.rst
 
+@BUILD_VMOD_ACCEPT@
 @BUILD_VMOD_BODYACCESS@
 @BUILD_VMOD_HEADER@
 @BUILD_VMOD_SAINTMODE@
+@BUILD_VMOD_STR@
 @BUILD_VMOD_TCP@
 @BUILD_VMOD_VAR@
 @BUILD_VMOD_VSTHROTTLE@
@@ -90,6 +100,8 @@ AM_VTC_LOG_FLAGS = \
 	-Dvmod_directors="directors from \"$(VARNISHAPI_VMODDIR)/libvmod_directors.so\""
 
 VMOD_TESTS = \
+	tests/accept/test01.vtc \
+	tests/accept/test02.vtc \
 	tests/bodyaccess/test01.vtc \
 	tests/bodyaccess/test02.vtc \
 	tests/bodyaccess/test03.vtc \
@@ -108,6 +120,13 @@ VMOD_TESTS = \
 	tests/saintmode/test03.vtc \
 	tests/saintmode/test04.vtc \
 	tests/saintmode/test05.vtc \
+	tests/str/test01.vtc \
+	tests/str/test02.vtc \
+	tests/str/test03.vtc \
+	tests/str/test04.vtc \
+	tests/str/test05.vtc \
+	tests/str/test06.vtc \
+	tests/str/test08.vtc \
 	tests/tcp/01-dumpinfo.vtc \
 	tests/tcp/02-congestion.vtc \
 	tests/tcp/03-read-tcpinfo.vtc \
