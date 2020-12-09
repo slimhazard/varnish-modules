@@ -82,7 +82,8 @@ vmod_xkey.3: VSC_xkey.rst
 @BUILD_VSC_XKEY@
 
 rst-docs: $(generated_docs)
-	cp $(generated_docs) $(top_srcdir)/docs/
+	mkdir -p $(top_builddir)/docs/
+	cp $(generated_docs) $(top_builddir)/docs/
 
 doctest:
 	for i in *.vcc; do \
@@ -160,9 +161,11 @@ EXTRA_DIST = \
 	foreign \
 	vmod_config.h \
 	$(VMOD_TESTS) \
+	vmod_accept.vcc \
 	vmod_bodyaccess.vcc \
 	vmod_header.vcc \
 	vmod_saintmode.vcc \
+	vmod_str.vcc \
 	vmod_tcp.vcc \
 	vmod_var.vcc \
 	vmod_vsthrottle.vcc \
