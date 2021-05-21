@@ -1,4 +1,4 @@
-AC_INIT([varnish-modules], [klarlack-0.18.0])
+AC_INIT([varnish-modules], [maxwait-0.1.0])
 AC_COPYRIGHT([Copyright (c) 2016-2021 Varnish Software Group])
 
 AC_PREREQ(2.63)
